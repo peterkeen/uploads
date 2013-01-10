@@ -17,5 +17,10 @@ read_env 'prod'
 
 load 'deploy'
 
+before "deploy" do
+  run("mkdir -p #{shared_path}/uploaded_files")
+end
 
-
+after :deploy do
+  run("ln -s #{shared_path}/uploaded_files #{current_path}/public/files")
+end
