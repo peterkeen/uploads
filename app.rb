@@ -3,25 +3,8 @@ require 'sinatra/base'
 require 'securerandom'
 require 'fileutils'
 require 'json'
-require 'mini_magick'
 
 class Uploads < Sinatra::Base
-
-  def resize_image(file, path, name, dimensions)
-    new_path = "#{path}/#{name}/#{file[:filename]}"
-    FileUtils.mkdir_p File.dirname(new_path)
-    p new_path
-
-    image = MiniMagick::Image.read(file[:tempfile])
-    image.combine_options do |command|
-      command.filter("box")
-      command.resize(dimensions + "^^")
-      command.gravity("Center")
-      command.extent(dimensions)
-    end
-
-    File.copy(image.path, new_path)
-  end
 
   get '/' do
     
@@ -58,13 +41,6 @@ class Uploads < Sinatra::Base
         "size" => bytes,
         "url" => request.base_url + "/files/#{dirname}/#{file[:filename]}",
       }
-
-      if file[:filename].end_with?('jpg') || file[:filename].end_with?('png')
-        resize_image(file, path, "small", "640x480")
-        resize_image(file, path, "thumbnail", "100x100")
-
-        file_hash["thumbnail_url"] = request.base_url + "/files/#{dirname}/thumbnail/#{file[:filename]}"
-      end
 
     end
 
