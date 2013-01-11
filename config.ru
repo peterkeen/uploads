@@ -3,7 +3,7 @@ require 'app'
 require 'rack/ssl'
 
 use Rack::ShowExceptions
-use Rack::SSL
+#use Rack::SSL
 
 app = Uploads.new
 
