@@ -15,7 +15,7 @@ class Uploads < Sinatra::Base
         "name" => File.basename(filename),
         "mtime" => File.mtime(filename),
         "size" => File.size?(filename),
-        "url" => request.base_url + "/files/#{dirname}/#{File.basename(filename)}"
+        "url" => "http://#{request.host}/files/#{dirname}/#{File.basename(filename)}"
       }
     end
 
