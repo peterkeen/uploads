@@ -39,9 +39,8 @@ class Uploads < Sinatra::Base
       file_hash = {
         "name" => file[:filename],
         "size" => bytes,
-        "url" => request.base_url + "/files/#{dirname}/#{file[:filename]}",
+        "url" => "http://#{ENV['ASSET_HOST'] || request.host}/files/#{dirname}/#{File.basename(filename)}"
       }
-
     end
 
     {'files' => result }.to_json
