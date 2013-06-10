@@ -10,6 +10,7 @@ class Uploads < Sinatra::Base
     
     @existing_files = Dir.glob(File.expand_path("../public/files/*", __FILE__)).map do |dir|
       filename = Dir.glob("#{dir}/*").reject { |f| f =~ /\/(thumbnail|small)\// }[0]
+      next unless filename
       dirname = File.basename(dir)
       {
         "name" => File.basename(filename),
@@ -17,7 +18,7 @@ class Uploads < Sinatra::Base
         "size" => File.size?(filename),
         "url" => "http://#{ENV['ASSET_HOST'] || request.host}/files/#{dirname}/#{File.basename(filename)}"
       }
-    end
+    end.compact
 
     erb :index
   end
