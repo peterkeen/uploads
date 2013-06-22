@@ -13,6 +13,7 @@ class UploadProxy < Sinatra::Base
 
     res = HTTParty.get("http://#{path}")
     content_type res.headers['Content-Type']
+    expires 60*60*24*14, :public, :must_revalidate
     res.body
   end
   
