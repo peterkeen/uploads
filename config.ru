@@ -1,9 +1,9 @@
 require 'rubygems'
-require 'app'
+require './app'
+require './proxy'
 require 'rack/ssl'
 
 use Rack::ShowExceptions
-use Rack::SSL
 
 app = Uploads.new
 
@@ -11,4 +11,7 @@ protected_app = Rack::Auth::Basic.new(app, "Uploads") do |username, password|
   username == ENV['USERNAME'] && password == ENV['PASSWORD']
 end
 
-run protected_app
+run Rack::URLMap.new(
+  '/p' => UploadProxy.new,
+  '/'  => protected_app
+)

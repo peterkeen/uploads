@@ -47,5 +47,5 @@ class Uploads < Sinatra::Base
     {'files' => result }.to_json
     
   end
-  
+
 end

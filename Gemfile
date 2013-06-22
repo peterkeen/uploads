@@ -6,6 +6,7 @@ gem 'puma'
 gem 'sinatra'
 gem 'rake'
 gem 'rack-ssl'
+gem 'httparty'
 
 group :development do
   gem 'shotgun'
