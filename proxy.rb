@@ -13,7 +13,8 @@ class UploadProxy < Sinatra::Base
 
     res = HTTParty.get("http://#{path}")
     content_type res.headers['Content-Type']
-    expires 60*60*24*14, :public, :must_revalidate
+    response.headers['Cache-Control'] = 'public, max-age=315360000'
+    response.headers['Last-Modified'] = res.headers['Last-Modified']
     res.body
   end
   
