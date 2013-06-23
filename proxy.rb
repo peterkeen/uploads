@@ -6,7 +6,7 @@ class UploadProxy < Sinatra::Base
 
   get '/*' do
     path = params[:splat][0]
-    if !path =~ /petekeen.com.*(js|css)/
+    if !path =~ /petekeen.com.*(js|css|woff|ttf|otf|png|ico|jpg)/
       status 404
       return "not found"
     end
