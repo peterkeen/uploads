@@ -15,7 +15,7 @@ class UploadProxy < Sinatra::Base
     content_type res.headers['Content-Type']
     response.headers['Cache-Control'] = 'public, max-age=315360000'
     response.headers['Last-Modified'] = res.headers['Last-Modified']
-    response.headers['Allow-Access-Control-Origin'] = '*'
+    response.headers['Access-Control-Allow-Origin'] = '*'
     res.body
   end
   
