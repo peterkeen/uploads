@@ -7,8 +7,8 @@ require 'fog'
 
 class Uploads < Sinatra::Base
 
-  before do
-    @conn = Fog::Storage.new(
+  def connection
+    Fog::Storage.new(
       provider: ENV['FOG_PROVIDER'],
       aws_access_key_id: ENV['AWS_ACCESS_KEY_ID'],
       aws_secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
@@ -17,7 +17,7 @@ class Uploads < Sinatra::Base
 
   get '/' do
     
-    @existing_files = @conn.directories.get(ENV['FOG_DIRECTORY']).files.map do |file|
+    @existing_files = connection.directories.get(ENV['FOG_DIRECTORY']).files.map do |file|
       filename = file.key
       {
         "name" => File.basename(filename),
@@ -40,7 +40,7 @@ class Uploads < Sinatra::Base
 
     result = params['files'].map do |file|
       fullpath = File.join(path, file[:filename])
-      f = @conn.directories.get(ENV['FOG_DIRECTORY']).files.create(key: fullpath, body: file[:tempfile].read)
+      f = connection.directories.get(ENV['FOG_DIRECTORY']).files.create(key: fullpath, body: file[:tempfile].read)
 
       file_hash = {
         "name" => file[:filename],
