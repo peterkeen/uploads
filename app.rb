@@ -3,20 +3,27 @@ require 'sinatra/base'
 require 'securerandom'
 require 'fileutils'
 require 'json'
+require 'fog'
 
 class Uploads < Sinatra::Base
 
+  before do
+    @conn = Fog::Storage.new(
+      provider: ENV['FOG_PROVIDER'],
+      aws_access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+      aws_secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+    )
+  end
+
   get '/' do
     
-    @existing_files = Dir.glob(File.expand_path("../public/files/*", __FILE__)).map do |dir|
-      filename = Dir.glob("#{dir}/*").reject { |f| f =~ /\/(thumbnail|small)\// }[0]
-      next unless filename
-      dirname = File.basename(dir)
+    @existing_files = @conn.directories.get(ENV['FOG_DIRECTORY']).files.map do |file|
+      filename = file.key
       {
         "name" => File.basename(filename),
-        "mtime" => File.mtime(filename),
-        "size" => File.size?(filename),
-        "url" => "http://#{ENV['ASSET_HOST'] || request.host}/files/#{dirname}/#{File.basename(filename)}"
+        "mtime" => file.last_modified,
+        "size" => file.content_length,
+        "url" => "http://#{ENV['ASSET_HOST'] || request.host}/#{filename}"
       }
     end.compact
 
@@ -29,18 +36,16 @@ class Uploads < Sinatra::Base
 
   post '/upload' do
     dirname = SecureRandom.hex(10)
-    path = File.expand_path("../public/files/#{dirname}", __FILE__)
-    FileUtils.mkdir_p(path)
+    path = "files/#{dirname}"
 
     result = params['files'].map do |file|
-      bytes = File.open("#{path}/#{file[:filename]}", "w+") do |f|
-        f.write(file[:tempfile].read)
-      end
+      fullpath = File.join(path, file[:filename])
+      f = @conn.directories.get(ENV['FOG_DIRECTORY']).files.create(key: fullpath, body: file[:tempfile].read)
 
       file_hash = {
         "name" => file[:filename],
-        "size" => bytes,
-        "url" => "http://#{ENV['ASSET_HOST'] || request.host}/files/#{dirname}/#{file[:filename]}"
+        "size" => f.content_length,
+        "url" => "http://#{ENV['ASSET_HOST'] || request.host}/#{fullpath}"
       }
     end
 

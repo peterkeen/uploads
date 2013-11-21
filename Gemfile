@@ -7,6 +7,7 @@ gem 'sinatra'
 gem 'rake'
 gem 'rack-ssl'
 gem 'httparty'
+gem 'fog'
 
 group :development do
   gem 'shotgun'
