@@ -2,7 +2,6 @@
 
 source 'http://rubygems.org'
 
-gem 'puma'
 gem 'sinatra'
 gem 'rake'
 gem 'rack-ssl'
