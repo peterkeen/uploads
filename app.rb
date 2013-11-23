@@ -16,14 +16,13 @@ class Uploads < Sinatra::Base
   end
 
   get '/' do
-    
     @existing_files = connection.directories.get(ENV['FOG_DIRECTORY']).files.map do |file|
       filename = file.key
       {
         "name" => File.basename(filename),
         "mtime" => file.last_modified,
         "size" => file.content_length,
-        "url" => "http://#{ENV['ASSET_HOST'] || request.host}/#{filename}"
+        "url" => "https://#{ENV['ASSET_HOST'] || request.host}/#{filename}"
       }
     end.compact
 
