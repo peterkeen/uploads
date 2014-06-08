@@ -1,1 +1,2 @@
+client_max_body_size 100M;
 add_header Access-Control-Allow-Origin *;
