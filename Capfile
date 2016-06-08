@@ -13,6 +13,7 @@ set :user, "peter"
 set :base_port, 7000
 set :concurrency, "web=1"
 set :listen_address, '10.248.9.84'
+set :use_ssl, true
 
 read_env 'prod'
 
